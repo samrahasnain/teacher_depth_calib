@@ -36,10 +36,6 @@ def data_list(qp_root,qp_list,qp_sorted_dict,config):
           depth.append((de_name+'/'+key[:index]+de_ext))
           gt.append((gt_name+'/'+key[:index]+gt_ext))
           quality.append(1)
-      else:
-          rgb.append((im_name+'/'+key[:index]+im_ext))
-          depth.append((de_name+'/'+key[:index]+de_ext))
-          gt.append((gt_name+'/'+key[:index]+gt_ext))
-          quality.append(0)
+
 
   return rgb,depth,gt,quality
