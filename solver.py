@@ -72,7 +72,7 @@ class Solver(object):
         iter_num = len(self.train_loader.dataset) // self.config.batch_size
         step=0  
         loss_vals=  []
-        self.RGBnet.train()
+        
         self.Dnet.train()
         
         for epoch in range(self.config.epoch):
