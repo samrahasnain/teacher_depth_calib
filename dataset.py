@@ -21,37 +21,35 @@ class ImageDataTrain(data.Dataset):
         self.sal_num = len(self.sal_rgb)
 
     def __getitem__(self, item):
-        while True:
-            # sal data loading
-            im_name = self.sal_rgb[item]
-            de_name = self.sal_depth[item]
-            gt_name = self.sal_gt[item]
-            q_score = self.quality_label[item]
-            #print(quality_label)
-            q_score = load_score(q_score)
-            if q_score==1.0:
-                sal_image = load_image(os.path.join(self.sal_root, im_name), self.image_size)
-                sal_depth = load_image(os.path.join(self.sal_root, de_name), self.image_size)
-                sal_label = load_sal_label(os.path.join(self.sal_root, gt_name), self.image_size)
-                name = self.sal_rgb[item].split('/')[1]
+        
+        # sal data loading
+        im_name = self.sal_rgb[item]
+        de_name = self.sal_depth[item]
+        gt_name = self.sal_gt[item]
+        q_score = self.quality_label[item]
+        #print(quality_label)
+        q_score = load_score(q_score)
+        
+        sal_image = load_image(os.path.join(self.sal_root, im_name), self.image_size)
+        sal_depth = load_image(os.path.join(self.sal_root, de_name), self.image_size)
+        sal_label = load_sal_label(os.path.join(self.sal_root, gt_name), self.image_size)
+        name = self.sal_rgb[item].split('/')[1]
+        sal_image, sal_depth, sal_label = cv_random_crop(sal_image, sal_depth, sal_label, self.image_size)
+        
+        sal_image = sal_image.transpose((2, 0, 1))
+        sal_depth = sal_depth.transpose((2, 0, 1))
+        sal_label = sal_label.transpose((2, 0, 1))
 
-                sal_image, sal_depth, sal_label = cv_random_crop(sal_image, sal_depth, sal_label, self.image_size)
+        sal_image = torch.Tensor(sal_image)
+        sal_depth = torch.Tensor(sal_depth)
+        sal_label = torch.Tensor(sal_label)
+        q_score = torch.Tensor(q_score)
         
-                sal_image = sal_image.transpose((2, 0, 1))
-                sal_depth = sal_depth.transpose((2, 0, 1))
-                sal_label = sal_label.transpose((2, 0, 1))
-
-                sal_image = torch.Tensor(sal_image)
-                sal_depth = torch.Tensor(sal_depth)
-                sal_label = torch.Tensor(sal_label)
-                q_score = torch.Tensor(q_score)
+        #print('dataset',q_score)
         
-                #print('dataset',q_score)
+        sample = {'sal_image': sal_image, 'sal_depth': sal_depth, 'sal_label': sal_label,'quality_label':q_score,'name':name}
+        return sample
         
-                sample = {'sal_image': sal_image, 'sal_depth': sal_depth, 'sal_label': sal_label,'quality_label':q_score,'name':name}
-                return sample
-            else:
-                continue
 
     def __len__(self):
         return self.sal_num
