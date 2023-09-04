@@ -75,17 +75,18 @@ def main(config):
         train_loader = get_loader(qp_root,rgb,depth,gt,quality,config)
         print('train dataset loaded:')
         print('numper of training  samples',len(train_loader))
-        if not os.path.exists("%s/demo-%s" % (config.save_folder, time.strftime("%d"))):
-            os.mkdir("%s/demo-%s" % (config.save_folder, time.strftime("%d")))
-        config.save_folder = "%s/demo-%s" % (config.save_folder, time.strftime("%d"))
+        if not os.path.exists("%s/demo-%s" % (config.save_folder_depth, time.strftime("%d"))):
+            os.mkdir("%s/demo-%s" % (config.save_folder_depth, time.strftime("%d")))
+        config.save_folder_depth = "%s/demo-%s" % (config.save_folder_depth, time.strftime("%d"))
         train = Solver(train_loader, None,config)
         train.train()
     elif config.mode == 'test':
         #get_test_info(config)
         test_loader = get_loader(qp_root,rgb,depth,gt,quality,config, mode='test')
-        path = os.path.join(config.test_folder, config.sal_mode)
-        if not os.path.exists(path): os.makedirs(path)
-        config.test_folder=path
+        #path = os.path.join(config.test_folder, config.sal_mode)
+        if not os.path.exists(config.test_folder_atts_depth): os.makedirs(config.test_folder_atts_depth)
+        if not os.path.exists(config.test_folder_dets_depth): os.makedirs(config.test_folder_dets_depth)
+        #config.test_folder=path
         test = Solver(None, test_loader, config)
         test.test()
     else:
@@ -106,10 +107,10 @@ if __name__ == '__main__':
 
     # Hyper-parameters
     parser.add_argument('--n_color', type=int, default=3)
-    parser.add_argument('--lr', type=float, default=0.0000001)  # Learning rate resnet:4e-4
+    parser.add_argument('--lr', type=float, default=0.0001)  # Learning rate resnet:4e-4
     parser.add_argument('--wd', type=float, default=0.0005)  # Weight decay
     parser.add_argument('--momentum', type=float, default=0.99)
-    parser.add_argument('--image_size', type=int, default=320)
+    parser.add_argument('--image_size', type=int, default=352)
     parser.add_argument('--cuda', type=bool, default=True)
     parser.add_argument('--device_id', type=str, default='cuda:0')
     parser.add_argument('--qp_image_size', type=int, default=768)
@@ -120,12 +121,12 @@ if __name__ == '__main__':
     parser.add_argument('--arch', type=str, default='conformer'
                         , choices=['resnet', 'vgg','densenet','conformer','cswin'])  # resnet, vgg or densenet
     parser.add_argument('--pretrained_model', type=str, default=pretrained_path)  # pretrained backbone model
-    parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--batch_size', type=int, default=1)  # only support 1 now
+    parser.add_argument('--epoch', type=int, default=120)
+    parser.add_argument('--batch_size', type=int, default=16)  # only support 1 now
     
     parser.add_argument('--num_thread', type=int, default=1)
-    parser.add_argument('--load', type=str, default='')  # pretrained JL-DCF model
-    parser.add_argument('--save_folder', type=str, default='checkpoints/')
+    parser.add_argument('--Dload', type=str, default='')  # pretrained JL-DCF model
+    parser.add_argument('--save_folder_depth', type=str, default='checkpoints/')
     parser.add_argument('--epoch_save', type=int, default=5)
     parser.add_argument('--iter_size', type=int, default=10)
     parser.add_argument('--show_every', type=int, default=50)
@@ -146,8 +147,9 @@ if __name__ == '__main__':
     
 
     # Testing settings
-    parser.add_argument('--model', type=str, default='./checkpoints/demo-08/epoch_40.pth')  # Snapshot
-    parser.add_argument('--test_folder', type=str, default='testint')  # Test results saving folder
+    parser.add_argument('--Dmodel', type=str, default='./checkpoints/demo-08/epoch_40.pth')  # Snapshot
+    parser.add_argument('--test_folder_atts_depth', type=str, default='testint')  # Test results saving folder
+    parser.add_argument('--test_folder_dets_depth', type=str, default='testint')  # Test results saving folder
     parser.add_argument('--sal_mode', type=str, default='RGBD135',
                         choices=['NJU2K', 'NLPR', 'STERE', 'RGBD135', 'LFSD', 'SIP', 'ReDWeb-S'])  # Test image dataset
     parser.add_argument('--test_root', type=str, default='../testsod/RGBD135/RGBD135')
