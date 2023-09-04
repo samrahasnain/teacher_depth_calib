@@ -76,13 +76,13 @@ class Solver(object):
         self.Dnet.train()
         
         for epoch in range(self.config.epoch):
-           
+            count=0
             loss_depth_item=0
             for i, data_batch in tqdm(enumerate(self.train_loader)):
                 sal_image, sal_depth, sal_label= data_batch['sal_image'], data_batch['sal_depth'], data_batch[
                         'sal_label']
 
-                
+                count=count+1
                 if (sal_image.size(2) != sal_label.size(2)) or (sal_image.size(3) != sal_label.size(3)):
                     print('IMAGE ERROR, PASSING```')
                     continue
@@ -111,7 +111,7 @@ class Solver(object):
           
             train_loss_depth = loss_depth_item/len(self.train_loader.dataset)
           
-               
+            print(count)  
             print('Epoch:[%2d/%2d] | Train Loss Depth : %0.3f' % (epoch, self.config.epoch,train_loss_depth))
                 
                 
