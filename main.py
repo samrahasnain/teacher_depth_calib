@@ -159,7 +159,7 @@ if __name__ == '__main__':
     config = parser.parse_args()
 
     if not os.path.exists(config.save_folder_depth):
-        os.mkdir(config.save_folder)
+        os.mkdir(config.save_folder_depth)
 
     #get_test_info(config)
 
