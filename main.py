@@ -158,7 +158,7 @@ if __name__ == '__main__':
     parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
     config = parser.parse_args()
 
-    if not os.path.exists(config.save_folder):
+    if not os.path.exists(config.save_folder_depth):
         os.mkdir(config.save_folder)
 
     #get_test_info(config)
